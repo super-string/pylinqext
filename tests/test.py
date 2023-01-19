@@ -1,10 +1,24 @@
 import unittest
-from pylinq import pylist
-from pylinq import pydict
 
-class PylistTest(unittest.TestCase):
+from pylinq import pydict, pylist
+
+class pylistTest(unittest.TestCase):
     
     l = pylist([1,2,3,4,5,6,7,8,9,0])
+        
+    def test_to_dict(self):
+        data = pylist([1,2,3])
+        self.assertEqual(
+            data.to_dict(lambda x: (x, x*x)),
+            { 1:1, 2:4, 3:9 }
+        )
+        
+    def test_to_pydict(self):
+        data = pylist([1,2,3])
+        self.assertEqual(
+            data.to_pydict(lambda x: (x, x*x)),
+            { 1:1, 2:4, 3:9 }
+        )
         
     def test_where(self):
         self.assertEqual(
@@ -75,6 +89,20 @@ class PylistTest(unittest.TestCase):
             self.l.concat(["a","b"]),
             [1,2,3,4,5,6,7,8,9,0,"a","b"]
         )
+        
+    def test_pydict(self):
+        dic = pydict({1:"a", 2:"b", 3:"c"})
+        self.assertEqual(
+            dic.to_pylist(),
+            [(1,"a"), (2,"b"), (3,"c")]
+        )
 
+    def test_max(self):
+        self.assertEqual(self.l.max(), 9)
+
+    def test_min(self):
+        self.assertEqual(self.l.min(), 0)
 if __name__ == "__main__":
+    pylistTest().test_max()
     unittest.main()
+    

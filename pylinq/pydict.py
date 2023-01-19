@@ -1,5 +1,8 @@
-
+import pylinq
 
 class pydict(dict):
-    def a() :
-        pass
+    def to_pylist(self) :
+        ret = pylinq.pylist()
+        for e in self.items():
+            ret.append(e)
+        return ret

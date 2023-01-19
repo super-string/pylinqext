@@ -1,11 +1,9 @@
-from typing import Generic, TypeVar
 from traitlets import Callable
 
-from pylinq import pylist
+import pylinq
+from pylinq.pydict import pydict
 
-T = TypeVar("T")
-
-class pylist(list[T], Generic[T]):
+class pylist(list):
     def for_each(self, x : Callable):
         for e in self:
             x(e)
@@ -40,6 +38,13 @@ class pylist(list[T], Generic[T]):
         
     def to_dict(self, x : Callable) ->dict:
         ret = {}
+        for e in self:
+            (k, v) = x(e)
+            ret[k] = v
+        return ret
+    
+    def to_pydict(self, x : Callable) ->pydict:
+        ret = pydict()
         for e in self:
             (k, v) = x(e)
             ret[k] = v
@@ -103,7 +108,7 @@ class pylist(list[T], Generic[T]):
         """
         return self.sum() / len(self)
     
-    def concat(self, second :list) -> pylist:
+    def concat(self, second :list):
         ret = pylist(self)
         pylist(second).for_each(lambda x: ret.append(x))
         return ret
@@ -127,9 +132,17 @@ class pylist(list[T], Generic[T]):
     def last_or_default(self):
         pass
     def max(self):
-        pass
+        val = self[0]
+        for e in self:
+            if val < e:
+                val = e
+        return val
     def min(self):
-        pass
+        val = self[0]
+        for e in self:
+            if val > e:
+                val = e
+        return val
     def order_by(self):
         pass
     def order_by_descending(self):
