@@ -1,5 +1,2 @@
-from .enumerable import *
-from .pylist import *
-from .pydict import *
-
+from .pylinq import *
 __version__ = "0.0.1"

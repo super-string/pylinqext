@@ -1,6 +1,7 @@
 import unittest
 
-from pylinq import pydict, pylist
+from pylinq import pylist
+from pylinq import pydict
 
 class pylistTest(unittest.TestCase):
     

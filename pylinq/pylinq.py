@@ -1,12 +1,12 @@
-
-from typing import Callable, Iterable, Iterator, MutableMapping, TypeVar
+from __future__ import annotations
+from typing import Callable, Generic, Iterable, Iterator, TypeVar, TYPE_CHECKING
 
 T = TypeVar("T")
 U = TypeVar("U")
 TKey = TypeVar("TKey")
 TValue = TypeVar("TValue")
 
-class enumerable(Iterator[T]):
+class enumerable(Iterator[T], Generic[T]):
     def __init__(self, ite:Iterable[T]):
         self._ite = ite
         self._index = 0
@@ -39,6 +39,9 @@ class enumerable(Iterator[T]):
     
     def to_list(self) -> list:
         return list(self._ite)
+    
+    def to_pylist(self) -> pylist:
+        return pylist(self._ite)
     
     def to_dict(self, key_selector:Callable[[T], TKey], value_selector:Callable[[T], TValue] = None) -> dict:
         dic = {}
@@ -226,3 +229,32 @@ class enumerable(Iterator[T]):
         pass
     def zip(self):
         pass
+    
+class pylist(list, enumerable):
+    def __init__(self, ite:Iterable[T]):
+        super(pylist, self).__init__(ite)
+        self._ite = self
+        self._index = 0
+
+    def for_each(self, action:Callable[[T], None]):
+        for e in self.__iter__():
+            action(e)
+            
+    def to_pydict(self, key_selector:Callable[[T], TKey], value_selector:Callable[[T], TValue] = None):
+        return pydict(self.to_dict(key_selector, value_selector))
+         
+    def as_enumerable(self) -> enumerable:
+        return enumerable(self)
+    
+
+class pydict(dict, enumerable):
+    def __init__(self, ite:Iterable[T]):
+        super(pydict, self).__init__(ite)
+        self._ite = self
+        self._index = 0
+    
+    def to_pylist(self) :
+        ret = pylist()
+        for e in self.items():
+            ret.append(e)
+        return ret

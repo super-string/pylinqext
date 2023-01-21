@@ -1,6 +1,6 @@
 import unittest
 
-from pylinq import enumerable
+from pylinq.pylinq import enumerable, pylist, pydict
 
 class TestInnerClass:
     name = ""
@@ -25,6 +25,12 @@ class enumerableTest(unittest.TestCase):
             [1,2,3,4,5,6,7,8,9,0]
         )
     
+    def test_to_pylist(self):
+        self.assertEqual(
+            self.e.to_pylist(),
+            [1,2,3,4,5,6,7,8,9,0]
+        )
+        
     def test_to_dict(self):
         self.assertEqual(
             enumerable.range(1,4).to_dict(lambda x:x),
