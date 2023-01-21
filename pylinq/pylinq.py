@@ -1,8 +1,12 @@
 from __future__ import annotations
-from typing import Callable, Generic, Iterable, Iterator, TypeVar, TYPE_CHECKING
+from typing import Any, Callable, Generic, Iterable, Iterator, TypeVar, TYPE_CHECKING
 
+if TYPE_CHECKING:
+    from .pylinq import pylist, pydict
+    
 T = TypeVar("T")
 U = TypeVar("U")
+S = TypeVar("S")
 TKey = TypeVar("TKey")
 TValue = TypeVar("TValue")
 
@@ -22,11 +26,6 @@ class enumerable(Iterator[T], Generic[T]):
     def __iter__(self) -> Iterator[T]:
         for e in self._ite:
             yield e
-    
-    def __select_many_iter(self, selector:Callable[[T], list[U]]):
-        for src in self._ite:
-            for ret in selector(src):
-                yield ret
         
     def __cond_iter(self, cond:Callable[[T], bool]):
         for e in self._ite:
@@ -34,8 +33,19 @@ class enumerable(Iterator[T], Generic[T]):
                 yield e
     
     @staticmethod
-    def range(start, end):
-        return enumerable(range(start, end))
+    def range(start:int, count:int):
+        def seq(start, count):
+            for e in range(start, start + count):
+                yield e
+        return enumerable([e for e in seq(start, count)])
+    
+    @staticmethod
+    def repeat(value: T, count:int):
+        def seq(value: T, count):
+            for _ in range(count):
+                yield value
+        return enumerable([e for e in seq(value, count)])
+            
     
     def to_list(self) -> list:
         return list(self._ite)
@@ -49,7 +59,7 @@ class enumerable(Iterator[T], Generic[T]):
             if value_selector == None:
                 dic[key_selector(e)] = e
             else:
-                dic[key_selector(e)] =value_selector(e)
+                dic[key_selector(e)] = value_selector(e)
         return dic 
     
     def where(self, cond:Callable[[T], bool]):
@@ -59,50 +69,38 @@ class enumerable(Iterator[T], Generic[T]):
         return enumerable([selector(e) for e in self.__iter__()])
     
     def select_many(self, selector:Callable[[T], list[U]]):
-        return enumerable([e for e in self.__select_many_iter(selector)])
+        def seq(selector:Callable[[T], list[U]]):
+            for src in self._ite:
+                for ret in selector(src):
+                    yield ret
+        return enumerable([e for e in seq(selector)])
         
     def take(self, count):
-        i = 0
-        ret = []
-        for e in self.__iter__():
-            if i < count:
-                ret.append(e)
-            else:
-                break
-            i += 1
-        return enumerable(ret)
+        return self.take_while(lambda _,i: i < count)
     
     def take_while(self, cond:Callable[[T, int], bool]):
-        i = 0
-        ret = []
-        for e in self.__iter__():
-            if not cond(e, i):
-                break
-            ret.append(e)
-            i += 1
-        return enumerable(ret)
+        def seq():
+            i = 0
+            for e in self.__iter__():
+                if not cond(e, i):
+                    break
+                yield e
+                i += 1
+        return enumerable([e for e in seq()])
             
     def skip(self, count):
-        i = 0
-        ret = []
-        for e in self.__iter__():
-            if i < count:
-                pass
-            else:
-                ret.append(e)
-            i += 1
-        return enumerable(ret)
+        return self.skip_while(lambda _, i: i < count)
     
     def skip_while(self, cond:Callable[[T, int], bool]):
-        i = 0
-        ret = []
-        for e in self.__iter__():
-            if cond(e, i):
-                pass
-            else:
-                ret.append(e)
-            i += 1
-        return enumerable(ret)
+        def seq():
+            i = 0
+            for e in self.__iter__():
+                if cond(e, i):
+                    pass
+                else:
+                    yield e
+                i += 1
+        return enumerable([e for e in seq()])
     
     def first(self, cond:Callable[[T], bool] = None):
         if cond == None:
@@ -149,15 +147,15 @@ class enumerable(Iterator[T], Generic[T]):
     def default_if_empty(self):
         pass
     
-    def __distinct_iter(self):
-        s = set()
-        for e in self._ite:
-            if not s.__contains__(e):
-                s.add(e)
-                yield e
-                
     def distinct(self):
-        return enumerable([e for e in self.__distinct_iter()])
+        def __distinct_iter():
+            s = set()
+            for e in self._ite:
+                if not s.__contains__(e):
+                    s.add(e)
+                    yield e
+        
+        return enumerable([e for e in __distinct_iter()])
     
     def average(self):
         return self.sum() / len(self._ite)
@@ -205,19 +203,62 @@ class enumerable(Iterator[T], Generic[T]):
                 return True
         return False
     
-    def concat(self, second :list):
-        pass
+    def concat(self, second: Iterable[T]):
+        def seq(first: Iterable[T], second: Iterable[T]):
+            for e in first:
+                yield e
+            for e in second:
+                yield e
+        return enumerable([e for e in seq(self._ite, second)])
+
     def contains(self, value) -> bool:
-        pass
+        for e in self._ite:
+            if e == value:
+                return True
+        return False
+    
     def aggregate(self, x : Callable):
         pass
-    def pyexcept(self):# 名前考える
-        pass
+    
+    def union(self, second: Iterable[T]):
+        def seq(first: Iterable[T], second: Iterable[T]):
+            s = set()
+            for e in first:
+                if not s.__contains__(e):
+                    yield e
+                    s.add(e)
+            for e in second:
+                if not s.__contains__(e):
+                    yield e
+                    s.add(e)
+            
+        return enumerable([e for e in seq(self._ite, second)])
+        
+    def set_difference(self, second: Iterable[T]):# in C# : Except
+        def seq(first: Iterable[T], second: Iterable[T]):
+            s = set()
+            for e in second:
+                s.add(e)
+            for e in first:
+                if not s.__contains__(e):
+                    yield e
+                    s.add(e)
+        return enumerable([e for e in seq(self._ite, second)])
+    
+    def intersect(self, second: Iterable[T]):
+        def seq(first: Iterable[T], second: Iterable[T]):
+            s = set()
+            for e in second:
+                s.add(e)
+            for e in first:
+                if s.__contains__(e):
+                    yield e
+                    s.remove(e)
+        return enumerable([e for e in seq(self._ite, second)])
+    
     def group_by(self):
         pass
     def group_join(self):
-        pass
-    def intersect(self):
         pass
     def join(self):
         pass
@@ -225,10 +266,16 @@ class enumerable(Iterator[T], Generic[T]):
         pass
     def order_by_descending(self):
         pass
-    def union(self):
-        pass
-    def zip(self):
-        pass
+    def zip(self, second:Iterable[U], selector:Callable[[T, U], S]):
+        def seq(first:Iterable, second:Iterable[U],selector:Callable[[T, U], S]):
+            f = next(first, None)
+            s = next(second, None)
+            while f != None and s != None:
+                yield selector(f, s)
+                f = next(first, None)
+                s = next(second, None)
+                
+        return enumerable([e for e in seq(self._ite, second, selector)])
     
 class pylist(list, enumerable):
     def __init__(self, ite:Iterable[T]):
@@ -254,7 +301,4 @@ class pydict(dict, enumerable):
         self._index = 0
     
     def to_pylist(self) :
-        ret = pylist()
-        for e in self.items():
-            ret.append(e)
-        return ret
+        return pylist([e for e in self.items()])

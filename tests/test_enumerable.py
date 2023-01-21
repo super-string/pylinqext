@@ -19,6 +19,18 @@ class enumerableTest(unittest.TestCase):
 
     e = enumerable([1,2,3,4,5,6,7,8,9,0])
     
+    def test_range(self):
+        self.assertEqual(
+            enumerable.range(1,9).to_list(),
+            [1,2,3,4,5,6,7,8,9]
+        )
+        
+    def test_repeat(self):
+        self.assertEqual(
+            enumerable.repeat(7,7).to_list(),
+            [7,7,7,7,7,7,7]
+        )
+        
     def test_to_list(self):
         self.assertEqual(
             self.e.to_list(),
@@ -33,11 +45,11 @@ class enumerableTest(unittest.TestCase):
         
     def test_to_dict(self):
         self.assertEqual(
-            enumerable.range(1,4).to_dict(lambda x:x),
+            enumerable.range(1,3).to_dict(lambda x:x),
             {1:1, 2:2, 3:3}
         )
         self.assertEqual(
-            enumerable.range(1,4).to_dict(lambda x:x, lambda x:str(x*x)),
+            enumerable.range(1,3).to_dict(lambda x:x, lambda x:str(x*x)),
             {1:"1", 2:"4", 3:"9"}
         )
     
@@ -164,5 +176,40 @@ class enumerableTest(unittest.TestCase):
         self.assertEqual(self.e.any(lambda x: 9 < x), False)
         self.assertEqual(self.e.any(lambda x: 8 < x), True)
         
+    def test_concat(self):
+        a = enumerable([1,2,3])
+        b = list([4,5])
+        self.assertEqual(a.concat(b).to_list(), enumerable([1,2,3,4,5]).to_list())
+        
+    def test_contains(self):
+        self.assertEqual(self.e.contains(3), True)
+        self.assertEqual(self.e.contains(11), False)
+    
+    def test_union(self):
+        a = pylist([2,4,5,6,8])
+        b = pylist([1,3,5,7,8,9])
+        
+        self.assertEqual(a.union(b).to_list(),[2,4,5,6,8,1,3,7,9])
+        
+    def test_set_difference(self):
+        a = pylist([2,4,5,6,8])
+        b = pylist([1,3,5,7,8,9])
+        
+        self.assertEqual(a.set_difference(b).to_list(),[2,4,6])
+    
+    def test_intersect(self):
+        a = pylist([2,4,5,6,8])
+        b = pylist([1,3,5,7,8,9])
+        
+        self.assertEqual(a.intersect(b).to_list(),[5,8])
+        
+    def test_zip(self):
+        a = pylist([1,2,3,4])
+        b = pylist(["A","B","C","D","E","F"])
+        
+        self.assertEqual(
+            a.zip(b, lambda f,s:(f,s)).to_list(),
+            [(1,"A"), (2,"B"),(3,"C"),(4,"D")]
+            )
 if __name__ == "__main__":
     unittest.main()
