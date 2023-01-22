@@ -18,6 +18,15 @@ class TestClass:
 class enumerableTest(unittest.TestCase):
 
     e = enumerable([1,2,3,4,5,6,7,8,9,0])
+    a1 = TestInnerClass("A1",1)
+    a2 = TestInnerClass("A2",2)
+    b1 = TestInnerClass("B1",3)
+    b2 = TestInnerClass("B2",4)
+    
+    a = TestClass("a", [a1, a2])
+    b = TestClass("b", [b1, b2])
+        
+    test = [a ,b]
     
     def test_readme(self):
         
@@ -143,21 +152,12 @@ class enumerableTest(unittest.TestCase):
         )
         
     def test_select_many(self):
-        a1 = TestInnerClass("A1",1)
-        a2 = TestInnerClass("A2",2)
-        b1 = TestInnerClass("B1",3)
-        b2 = TestInnerClass("B2",4)
-        
-        a = TestClass("a", [a1, a2])
-        b = TestClass("b", [b1, b2])
-        
-        test = [a ,b]
         self.assertEqual(
-            enumerable(test).select_many(lambda x: x.hoge).to_list(),
-            [a1, a2, b1, b2]
+            enumerable(self.test).select_many(lambda x: x.hoge).to_list(),
+            [self.a1, self.a2, self.b1, self.b2]
         )
         self.assertEqual(
-            enumerable(test).select_many(lambda x: x.name).to_list(),
+            enumerable(self.test).select_many(lambda x: x.name).to_list(),
             ["a", "b"]
         )
 
@@ -165,6 +165,14 @@ class enumerableTest(unittest.TestCase):
         self.assertEqual(
             enumerable([1,1,2,2,3,3,5,5,4,4]).distinct().to_list(),
             [1,2,3,5,4]
+        )
+        
+    def test_distinct_by(self):
+        test_data = [self.a1, self.b2, self.a1, self.b1]
+        test_data.append(TestInnerClass("B1", None))
+        self.assertEqual(
+            enumerable(test_data).distinct_by(lambda x:x.name).to_list(),
+             [self.a1, self.b2, self.b1]
         )
     
     def test_sum(self):
@@ -181,24 +189,13 @@ class enumerableTest(unittest.TestCase):
     def test_max(self):
         self.assertEqual(self.e.max(), 9)
         
-        a1 = TestInnerClass("A1",1)
-        a2 = TestInnerClass("A2",2)
-        b1 = TestInnerClass("B1",3)
-        b2 = TestInnerClass("B2",4)
-        
-        data = enumerable([a1,a2,b1,b2])
+        data = enumerable([self.a1,self.a2,self.b1,self.b2])
         self.assertEqual(data.max(lambda x: x.piyo), 4)
         
     def test_min(self):
         self.assertEqual(self.e.min(), 0)
-
         
-        a1 = TestInnerClass("A1",1)
-        a2 = TestInnerClass("A2",2)
-        b1 = TestInnerClass("B1",3)
-        b2 = TestInnerClass("B2",4)
-        
-        data = enumerable([a1,a2,b1,b2])
+        data = enumerable([self.a1,self.a2,self.b1,self.b2])
         self.assertEqual(data.min(lambda x: x.piyo), 1)
         
     def test_all(self):

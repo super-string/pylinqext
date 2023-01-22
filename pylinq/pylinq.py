@@ -162,16 +162,20 @@ class enumerable(Iterator[T], Generic[T]):
     def default_if_empty(self):
         pass
     
-    def distinct(self):
-        def __distinct_iter():
-            s = set()
-            for e in self._ite:
-                if not s.__contains__(e):
-                    s.add(e)
-                    yield e
+    def __distinct_iter(self, keySelector:Callable[[T],U]):
+        s = set()
+        for e in self._ite:
+            current = keySelector(e)
+            if not s.__contains__(current):
+                s.add(current)
+                yield e
         
-        return enumerable([e for e in __distinct_iter()])
+    def distinct(self):
+        return enumerable([e for e in self.__distinct_iter(lambda x:x)])
     
+    def distinct_by(self, keySelector:Callable[[T],U]):
+        return enumerable([e for e in self.__distinct_iter(keySelector)])
+
     def average(self, selector:Callable[[T], bool] = lambda x:True):
         return self.sum(selector) / self.count(selector)
     
