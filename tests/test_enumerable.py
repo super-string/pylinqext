@@ -249,5 +249,11 @@ class enumerableTest(unittest.TestCase):
             a.aggregate(10, lambda ret, current: ret + current, lambda x:x*x),
             (10+1+2+3+4+5)*(10+1+2+3+4+5)
         )
+        
+    def test_chunk(self):
+        self.assertEqual(
+            self.e.chunk(3),
+            [[1,2,3],[4,5,6],[7,8,9],[0]]
+        )
 if __name__ == "__main__":
     unittest.main()

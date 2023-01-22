@@ -9,6 +9,8 @@ U = TypeVar("U")
 S = TypeVar("S")
 TKey = TypeVar("TKey")
 TValue = TypeVar("TValue")
+TElement = TypeVar("TElement")
+TSource = TypeVar("TSource")
 
 class enumerable(Iterator[T], Generic[T]):
     def __init__(self, ite:Iterable[T]):
@@ -268,18 +270,6 @@ class enumerable(Iterator[T], Generic[T]):
                     s.remove(e)
         return enumerable([e for e in seq(self._ite, second)])
     
-    def group_by(self):
-        pass
-    def group_join(self):
-        pass
-    
-    def join(self, inner:Iterable[U], outKeySelector:Callable[[T], TKey], innerKeySelector:Callable[[U], TKey], resultSelector:Callable[[T,U], TValue]):
-        pass
-    
-    def order_by(self):
-        pass
-    def order_by_descending(self):
-        pass
     def zip(self, second:Iterable[U], selector:Callable[[T, U], S]):
         def seq(first:Iterable, second:Iterable[U], selector:Callable[[T, U], S]):
             f = next(first, None)
@@ -291,6 +281,19 @@ class enumerable(Iterator[T], Generic[T]):
                 
         return enumerable([e for e in seq(self._ite, second, selector)])
     
+    def chunk(self, size:int):
+        ret = []
+        total = len(self._ite)
+        remain = total
+        for i in range(int(total / size)):
+            ret.append(self.skip(i * size).take(size).to_list())
+            remain -= size
+            
+        if remain != 0:
+            ret.append(self.skip(total - remain).to_list())
+            
+        return ret
+        
 class pylist(list, enumerable):
     def __init__(self, ite:Iterable[T]):
         super(pylist, self).__init__(ite)
