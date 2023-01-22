@@ -177,8 +177,11 @@ class enumerable(Iterator[T], Generic[T]):
                 total += e
         return total
     
-    def aggregate(self):
-        pass
+    def aggregate(self, seed:U, accum:Callable[[U,T],U], resultSelector:Callable[[U],S] = lambda x:x):
+        ret = seed
+        for e in self._ite:
+            ret = accum(ret, e)
+        return resultSelector(ret)
     
     def count(self, cond:Callable[[T], bool]= lambda x:True):
         cnt = 0
@@ -225,9 +228,6 @@ class enumerable(Iterator[T], Generic[T]):
             if e == value:
                 return True
         return False
-    
-    def aggregate(self, x : Callable):
-        pass
     
     def union(self, second: Iterable[T]):
         def seq(first: Iterable[T], second: Iterable[T]):

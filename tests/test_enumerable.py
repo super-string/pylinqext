@@ -226,5 +226,12 @@ class enumerableTest(unittest.TestCase):
         self.assertEqual(pylist([3]).single(),3)
         self.assertEqual(pylist(a).single(lambda x:x>7),8)
         
+    def test_aggregate(self):
+        a = pylist([1,2,3,4,5])
+        
+        self.assertEqual(
+            a.aggregate(10, lambda ret, current: ret + current, lambda x:x*x),
+            (10+1+2+3+4+5)*(10+1+2+3+4+5)
+        )
 if __name__ == "__main__":
     unittest.main()
