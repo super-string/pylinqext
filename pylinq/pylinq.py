@@ -194,20 +194,22 @@ class enumerable(Iterator[T], Generic[T]):
             cnt += 1
         return cnt
     
-    def max(self):
-        val = self._ite[0]
+    def max(self, selector:Callable[[T], Any] = lambda x:x):
+        val = selector(self._ite[0])
         for e in self._ite:
-            if val < e:
-                val = e
+            current = selector(e)
+            if val < current:
+                val = current
         return val
     
-    def min(self):
-        val = self._ite[0]
+    def min(self, selector:Callable[[T], Any] = lambda x:x):
+        val = selector(self._ite[0])
         for e in self._ite:
-            if val > e:
-                val = e
+            current = selector(e)
+            if val > current:
+                val = current
         return val
-
+    
     def all(self, cond:Callable[[T], bool]) -> bool:
         for e in self._ite:
             if not cond(e):

@@ -181,9 +181,26 @@ class enumerableTest(unittest.TestCase):
     def test_max(self):
         self.assertEqual(self.e.max(), 9)
         
+        a1 = TestInnerClass("A1",1)
+        a2 = TestInnerClass("A2",2)
+        b1 = TestInnerClass("B1",3)
+        b2 = TestInnerClass("B2",4)
+        
+        data = enumerable([a1,a2,b1,b2])
+        self.assertEqual(data.max(lambda x: x.piyo), 4)
+        
     def test_min(self):
         self.assertEqual(self.e.min(), 0)
-    
+
+        
+        a1 = TestInnerClass("A1",1)
+        a2 = TestInnerClass("A2",2)
+        b1 = TestInnerClass("B1",3)
+        b2 = TestInnerClass("B2",4)
+        
+        data = enumerable([a1,a2,b1,b2])
+        self.assertEqual(data.min(lambda x: x.piyo), 1)
+        
     def test_all(self):
         self.assertEqual(self.e.all(lambda x: 0 <= x), True)
         self.assertEqual(self.e.all(lambda x: 1 <= x), False)
