@@ -53,13 +53,10 @@ class enumerable(Iterator[T], Generic[T]):
     def to_pylist(self) -> pylist:
         return pylist(self._ite)
     
-    def to_dict(self, key_selector:Callable[[T], TKey], value_selector:Callable[[T], TValue] = None) -> dict:
+    def to_dict(self, key_selector:Callable[[T], TKey], value_selector:Callable[[T], TValue] = lambda x:x) -> dict:
         dic = {}
         for e in self._ite:
-            if value_selector == None:
-                dic[key_selector(e)] = e
-            else:
-                dic[key_selector(e)] = value_selector(e)
+            dic[key_selector(e)] = value_selector(e)
         return dic 
     
     def where(self, cond:Callable[[T], bool]):
@@ -102,7 +99,7 @@ class enumerable(Iterator[T], Generic[T]):
                 i += 1
         return enumerable([e for e in seq()])
     
-    def first(self, cond:Callable[[T], bool] = None):
+    def first(self, cond:Callable[[T], bool] = lambda x:True):
         if cond == None:
             return self.to_list()[0]
         
@@ -112,18 +109,18 @@ class enumerable(Iterator[T], Generic[T]):
             
         raise Exception("not found")
     
-    def first_or_default(self, cond:Callable[[T], bool] = None):
+    def first_or_default(self, cond:Callable[[T], bool] = lambda x:True):
         try:
             return self.first(cond)
         except:
             return None
         
-    def last(self, cond:Callable[[T], bool] = None):
+    def last(self, cond:Callable[[T], bool] = lambda x:True):
         l = list(self._ite)
         l.reverse()
         return enumerable(l).first(cond)
             
-    def last_or_default(self, cond:Callable[[T], bool] = None):
+    def last_or_default(self, cond:Callable[[T], bool] = lambda x:True):
         try:
             return self.last(cond)
         except:
@@ -138,11 +135,24 @@ class enumerable(Iterator[T], Generic[T]):
         except:
             return None
         
-    def single(self, cond:Callable[[T], bool] = None):
-        pass
+    def single(self, cond:Callable[[T], bool] = lambda x:True):
+        ret = None
+        found = 0
+        for e in self.__cond_iter(cond):
+            ret = e
+            found += 1
+        
+        if found == 0:
+            raise Exception("no element")
+        if found == 1:
+            return ret
+        raise Exception("more than one element")
     
-    def single_or_default(self, cond:Callable[[T], bool] = None):
-        pass
+    def single_or_default(self, cond:Callable[[T], bool] = lambda x:True):
+        try:
+            self.single(cond)
+        except:
+            return None
     
     def default_if_empty(self):
         pass
@@ -157,19 +167,20 @@ class enumerable(Iterator[T], Generic[T]):
         
         return enumerable([e for e in __distinct_iter()])
     
-    def average(self):
-        return self.sum() / len(self._ite)
+    def average(self, selector:Callable[[T], bool] = lambda x:True):
+        return self.sum(selector) / self.count(selector)
     
-    def sum(self):
+    def sum(self, selector:Callable[[T], bool] = lambda x:True):
         total = 0
         for e in self._ite:
-            total += e
+            if selector(e):
+                total += e
         return total
     
     def aggregate(self):
         pass
     
-    def count(self, cond:Callable[[T], bool]):
+    def count(self, cond:Callable[[T], bool]= lambda x:True):
         cnt = 0
         for _ in self.__cond_iter(cond):
             cnt += 1
@@ -195,9 +206,7 @@ class enumerable(Iterator[T], Generic[T]):
                 return False
         return True
     
-    def any(self, x : Callable = None) -> bool:
-        if x == None:
-            return 0 < len(self._ite)
+    def any(self, x : Callable[[T], bool] = lambda x: True) -> bool:
         for e in self._ite:
             if x(e):
                 return True
@@ -267,7 +276,7 @@ class enumerable(Iterator[T], Generic[T]):
     def order_by_descending(self):
         pass
     def zip(self, second:Iterable[U], selector:Callable[[T, U], S]):
-        def seq(first:Iterable, second:Iterable[U],selector:Callable[[T, U], S]):
+        def seq(first:Iterable, second:Iterable[U], selector:Callable[[T, U], S]):
             f = next(first, None)
             s = next(second, None)
             while f != None and s != None:

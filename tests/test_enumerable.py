@@ -153,9 +153,11 @@ class enumerableTest(unittest.TestCase):
     
     def test_sum(self):
         self.assertEqual(self.e.sum(), 45)
+        self.assertEqual(self.e.sum(lambda x: x < 5), 10)
     
     def test_average(self):
         self.assertEqual(self.e.average(), 4.5)
+        self.assertEqual(self.e.average(lambda x: x < 5), 2)
     
     def test_count(self):
         self.assertEqual(self.e.count(lambda x: x > 5), 4)
@@ -211,5 +213,18 @@ class enumerableTest(unittest.TestCase):
             a.zip(b, lambda f,s:(f,s)).to_list(),
             [(1,"A"), (2,"B"),(3,"C"),(4,"D")]
             )
+        
+    def test_single(self):
+        a = pylist([1, 3, 5, 6, 8, 5])
+        
+        with self.assertRaises(Exception):
+            pylist([]).single()
+        
+        with self.assertRaises(Exception):
+            pylist(a).single(lambda x:5<x)
+                    
+        self.assertEqual(pylist([3]).single(),3)
+        self.assertEqual(pylist(a).single(lambda x:x>7),8)
+        
 if __name__ == "__main__":
     unittest.main()
