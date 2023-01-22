@@ -1,7 +1,6 @@
 import unittest
 
-from pylinq import pylist
-from pylinq import pydict
+from pylinq import pylist, pydict
 
 class pylistTest(unittest.TestCase):
     
@@ -14,16 +13,19 @@ class pylistTest(unittest.TestCase):
             { 1:1, 2:4, 3:9 }
         )
 
+    def test_as_enumerable(self):
+        e = self.l.as_enumerable()
+        self.assertEqual(e.to_pylist(), self.l)
 
 class pydictTest(unittest.TestCase):
     
     l = pydict({1:1, 2:2, 3:3})
         
-    def test_to_pydict(self):
-        data = pylist([1,2,3])
+    def test_to_pylist(self):
+        expected = pylist([(1,1),(2,2),(3,3)])
         self.assertEqual(
-            data.to_pydict(lambda x:x, lambda x:x*x),
-            { 1:1, 2:4, 3:9 }
+            self.l.to_pylist(),
+            expected
         )
                 
 if __name__ == "__main__":
