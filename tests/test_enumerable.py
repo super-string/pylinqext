@@ -19,6 +19,16 @@ class enumerableTest(unittest.TestCase):
 
     e = enumerable([1,2,3,4,5,6,7,8,9,0])
     
+    def test_readme(self):
+        
+        e = enumerable([1,2,3,4,5,6,7,8,9,0])
+        
+        e.where(lambda x: x % 2 == 0)\
+            .select(lambda x: x * x)\
+            .where(lambda x: 30 < x)\
+            .to_pylist()\
+            .for_each(lambda x: print(x))
+            
     def test_range(self):
         self.assertEqual(
             enumerable.range(1,9).to_list(),
