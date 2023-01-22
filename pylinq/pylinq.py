@@ -269,8 +269,10 @@ class enumerable(Iterator[T], Generic[T]):
         pass
     def group_join(self):
         pass
-    def join(self):
+    
+    def join(self, inner:Iterable[U], outKeySelector:Callable[[T], TKey], innerKeySelector:Callable[[U], TKey], resultSelector:Callable[[T,U], TValue]):
         pass
+    
     def order_by(self):
         pass
     def order_by_descending(self):
