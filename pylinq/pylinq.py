@@ -53,7 +53,7 @@ class enumerable(Iterator[T], Generic[T]):
     def to_pylist(self) -> pylist:
         return pylist(self._ite)
     
-    def to_readonly_pylist(self) -> pylist:
+    def to_readonly_pylist(self) -> pyreadonlylist:
         return pyreadonlylist(self._ite)
     
     def to_dict(self, key_selector:Callable[[T], TKey], value_selector:Callable[[T], TValue] = lambda x:x) -> dict:
@@ -307,14 +307,9 @@ class pylist(list, enumerable):
     def as_enumerable(self) -> enumerable:
         return enumerable(self)
     
-class pyreadonlylist(pylist, enumerable):
+class pyreadonlylist(tuple, enumerable):
     def __init__(self, ite:Iterable[T]):
-        super(pyreadonlylist, self).__init__(ite)
-        self._ite = self
-        self._index = 0
-    
-    def __getitem__(self, index:int):
-        return self._ite[index]
+        super(pyreadonlylist, self).__init__(tuple(ite))
     
     def __setitem__(self, index:int, value:T):
         raise NotImplementedError()
