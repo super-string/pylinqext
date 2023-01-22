@@ -1,6 +1,6 @@
 import unittest
 
-from pylinq import pylist, pydict
+from pylinq import pylist, pydict, pyreadonlylist
 
 class pylistTest(unittest.TestCase):
     
@@ -16,6 +16,12 @@ class pylistTest(unittest.TestCase):
     def test_as_enumerable(self):
         e = self.l.as_enumerable()
         self.assertEqual(e.to_pylist(), self.l)
+        
+    def test_readonly(self):
+        r = pyreadonlylist([1,2,3])
+        self.assertEqual(r, [1,2,3])
+        with self.assertRaises(NotImplementedError):
+            r[1] = 10
 
 class pydictTest(unittest.TestCase):
     

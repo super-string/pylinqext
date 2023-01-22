@@ -46,6 +46,12 @@ class enumerableTest(unittest.TestCase):
             self.e.to_list(),
             [1,2,3,4,5,6,7,8,9,0]
         )
+        
+    def test_to_readonly_pylist(self):
+        r = enumerable([1,2,3]).to_readonly_pylist()
+        self.assertEqual(r, [1,2,3])
+        with self.assertRaises(NotImplementedError):
+            r[1] = 10        
     
     def test_to_pylist(self):
         self.assertEqual(
