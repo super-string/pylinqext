@@ -1,4 +1,4 @@
-from pylinq import *
+from pylinqext import *
 
 if __name__ == '__main__':
     from .cli import main

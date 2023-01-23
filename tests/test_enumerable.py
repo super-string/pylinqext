@@ -1,6 +1,6 @@
 import unittest
 
-from pylinq.pylinq import enumerable, pylist, pydict
+from pylinqext.pylinq import enumerable, pylist, pydict
 
 class TestInnerClass:
     name = ""

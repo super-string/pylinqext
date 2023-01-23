@@ -1,13 +1,13 @@
 ![GitHub](https://img.shields.io/github/license/super-string/pylinq)
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/super-string/pylinq)
 ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/super-string/pylinq)
-# pylinq
-pylinq is a package for C#er to write code like LINQ.
+# pylinqext
+pylinqext is a package for C#er to write code like LINQ.
 
 ## Usage
 ```python
-from pylinq import pylist
-from pylinq import enumerable
+from pylinqext import pylist
+from pylinqext import enumerable
   
 e = enumerable([1,2,3,4,5,6,7,8,9,0])
   
@@ -25,7 +25,7 @@ Output:
 
 ## Install
 ```
-pip install git+https://github.com/super-string/pylinq
+pip install git+https://github.com/super-string/pylinqext
 ```
 
 ## Version

@@ -3,16 +3,16 @@
 # License: MIT
 
 from setuptools import setup, find_packages
-import pylinq
+import pylinqext
 
-NAME = "pylinq"
+NAME = "pylinqext"
 DESCRIPTION = "for C#er, you can write code like LINQ."
 AUTHOR = "super-string"
 AUTHOR_EMAIL = "sh5937tech@gmail.com"
 URL = "https://github.com/super-string"
 LLICENSE = "MIT"
 DOWNLOAD_URL = "https://github.com/super-string"
-VERSION = pylinq.__version__
+VERSION = pylinqext.__version__
 INSTALL_REQUIRES = None
 
 with open("README.md", "r", encoding="utf_8") as fp:

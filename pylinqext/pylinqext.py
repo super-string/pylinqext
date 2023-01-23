@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import Any, Callable, Generic, Iterable, Iterator, TypeVar, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from .pylinq import pylist, pydict
+    from .pylinqext import pylist, pydict
     
 T = TypeVar("T")
 U = TypeVar("U")
