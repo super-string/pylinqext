@@ -25,7 +25,7 @@ Output:
 
 ## Install
 ```
-pip install git+https://github.com/super-string/pylinqext
+pip install pylinqext
 ```
 
 ## Version
