@@ -50,6 +50,18 @@ class enumerableTest(unittest.TestCase):
             [7,7,7,7,7,7,7]
         )
         
+    def test_append(self):
+        self.assertEqual(
+            self.e.append(11).to_list(),
+            [1,2,3,4,5,6,7,8,9,0,11]
+        )
+        
+    def test_prepend(self):
+        self.assertEqual(
+            self.e.prepend(11).to_list(),
+            [11,1,2,3,4,5,6,7,8,9,0]
+        )
+        
     def test_to_list(self):
         self.assertEqual(
             self.e.to_list(),
@@ -89,6 +101,11 @@ class enumerableTest(unittest.TestCase):
             self.e.select(lambda x: str(x)).to_list(),
             ["1","2","3","4","5","6","7","8","9","0"]
         )
+        
+    def test_of_type(self):
+        data = enumerable([1,"2",3,4,"5"])
+        self.assertEqual(data.of_type(str).to_list(), ["2","5"])
+        self.assertEqual(data.of_type(int).to_list(), [1,3,4])
 
     def test_take(self):
         self.assertEqual(
@@ -228,7 +245,20 @@ class enumerableTest(unittest.TestCase):
         b = pylist([1,3,5,7,8,9])
         
         self.assertEqual(a.set_difference(b).to_list(),[2,4,6])
-    
+        
+    def test_set_difference_by(self):
+        test1 = enumerable([self.a1,self.b2, self.a2])
+        test2 = enumerable([self.b1, self.a2,self.a1])
+
+        self.assertEqual(
+            test1.set_difference_by(test2, lambda x:x.name).to_list(),
+            [self.b2]
+            )
+        self.assertEqual(
+            test2.set_difference_by(test1, lambda x:x.name).to_list(),
+            [self.b1]
+            )
+        
     def test_intersect(self):
         a = pylist([2,4,5,6,8])
         b = pylist([1,3,5,7,8,9])
@@ -268,6 +298,12 @@ class enumerableTest(unittest.TestCase):
         self.assertEqual(
             self.e.chunk(3),
             [[1,2,3],[4,5,6],[7,8,9],[0]]
+        )
+        
+    def test_reverse(self):
+        self.assertEqual(
+            self.e.reverse().to_list(),
+            [0,9,8,7,6,5,4,3,2,1]
         )
 if __name__ == "__main__":
     unittest.main()

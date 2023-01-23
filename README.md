@@ -35,7 +35,8 @@ pip install git+https://github.com/super-string/pylinq
     - implement single, aggregate, etc
 - v0.0.3
     - readonlylist, some methods
-
+- v0.5.0
+    - renampe project to pylinqext
 ## class
 - enumerable
 - pylist
@@ -51,7 +52,7 @@ pip install git+https://github.com/super-string/pylinq
 |〇|aggregate||
 |〇|all||
 |〇|any||
-|△|append||
+|〇|append||
 |〇|as_enumerable|implemented to pylist|
 |〇|average||
 |×|cast||
@@ -66,7 +67,7 @@ pip install git+https://github.com/super-string/pylinq
 |〇|element_at_or_default||
 |×|empty||
 |〇|except|named:`set_difference`|
-|△|except_by|named:`set_difference_by`|
+|〇|except_by|named:`set_difference_by`|
 |〇|first||
 |〇|first_or_default||
 |×|group_by||
@@ -77,15 +78,15 @@ pip install git+https://github.com/super-string/pylinq
 |△|max_by||
 |〇|min||
 |△|min_by||
-|△|of_type||
+|〇|of_type||
 |×|order||
 |×|order_by||
 |×|order_by_descending||
 |×|order_descending||
-|△|prepend||
+|〇|prepend||
 |〇|range||
 |〇|repeat||
-|△|reverse||
+|〇|reverse||
 |〇|select||
 |〇|select_many||
 |×|sequential_equal||

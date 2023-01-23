@@ -1,14 +1,34 @@
-from setuptools import setup, find_packages
+# Author: super-string <sh5937tech@gmail.com>
+# Copyright (c) 2023- super-string
+# License: MIT
 
+from setuptools import setup, find_packages
 import pylinq
 
+NAME = "pylinq"
+DESCRIPTION = "for C#er, you can write code like LINQ."
+AUTHOR = "super-string"
+AUTHOR_EMAIL = "sh5937tech@gmail.com"
+URL = "https://github.com/super-string"
+LLICENSE = "MIT"
+DOWNLOAD_URL = "https://github.com/super-string"
+VERSION = pylinq.__version__
+INSTALL_REQUIRES = None
+
+with open("README.md", "r", encoding="utf_8") as fp:
+    readme = fp.read()
+
+long_description = readme
+
 setup(
-    name="pylinq",
-    version=pylinq.__version__,
-    description="for C#er, you can use LINQ like C#",
-    author="super-string",
-    author_email="sh5937tech@gmail.com",
-    url="https://github.com/super-string",
-    license="MIT",
+    name=NAME,
+    version=VERSION,
+    description=DESCRIPTION,
+    long_description=long_description,
+    author=AUTHOR,
+    author_email=AUTHOR_EMAIL,
+    url=URL,
+    license=LLICENSE,
+    download_url=DOWNLOAD_URL,
     packages=find_packages()
 )

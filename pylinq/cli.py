@@ -1,2 +1,2 @@
 def execute():
-    print("test")
+    print("")

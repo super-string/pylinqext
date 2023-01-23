@@ -47,8 +47,17 @@ class enumerable(Iterator[T], Generic[T]):
             for _ in range(count):
                 yield value
         return enumerable([e for e in seq(value, count)])
-            
+        
+    def append(self, element:T):
+        l = pylist(self._ite)
+        l.append(element)
+        return l.as_enumerable()
     
+    def prepend(self, element:T):
+        l = pylist(self._ite)
+        l.insert(0, element)
+        return l.as_enumerable()
+        
     def to_list(self) -> list:
         return list(self._ite)
     
@@ -76,6 +85,13 @@ class enumerable(Iterator[T], Generic[T]):
                 for ret in selector(src):
                     yield ret
         return enumerable([e for e in seq(selector)])
+    
+    def of_type(self, filter:U):
+        def seq(ite:Iterable[T], filter:U):
+            for e in ite:
+                if type(e) == filter:
+                    yield e
+        return enumerable([e for e in seq(self._ite, filter)])
         
     def take(self, count):
         return self.take_while(lambda _,i: i < count)
@@ -254,16 +270,20 @@ class enumerable(Iterator[T], Generic[T]):
             
         return enumerable([e for e in seq(self._ite, second)])
         
+    def __set_difference_iter(self, second: Iterable[T], keySelector:Callable[[T],U]):
+        s = set()
+        for e in second:
+            s.add(keySelector(e))
+        for e in self._ite:
+            if not s.__contains__(keySelector(e)):
+                yield e
+                s.add(keySelector(e))
+    
     def set_difference(self, second: Iterable[T]):# in C# : Except
-        def seq(first: Iterable[T], second: Iterable[T]):
-            s = set()
-            for e in second:
-                s.add(e)
-            for e in first:
-                if not s.__contains__(e):
-                    yield e
-                    s.add(e)
-        return enumerable([e for e in seq(self._ite, second)])
+        return enumerable([e for e in self.__set_difference_iter(second, lambda x:x)])
+    
+    def set_difference_by(self, second: Iterable[T], keySelector:Callable[[T],U]):
+        return enumerable([e for e in self.__set_difference_iter(second, keySelector)])
     
     def intersect(self, second: Iterable[T]):
         def seq(first: Iterable[T], second: Iterable[T]):
@@ -299,7 +319,12 @@ class enumerable(Iterator[T], Generic[T]):
             ret.append(self.skip(total - remain).to_list())
             
         return ret
-        
+    
+    def reverse(self):
+        l = pylist(self._ite)
+        l.reverse()
+        return enumerable([e for e in l.__iter__()])
+    
 class pylist(list, enumerable):
     def __init__(self, ite:Iterable[T]):
         super(pylist, self).__init__(ite)
