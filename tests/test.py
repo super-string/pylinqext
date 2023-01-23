@@ -19,7 +19,7 @@ class pylistTest(unittest.TestCase):
         
     def test_readonly(self):
         r = pyreadonlylist([1,2,3])
-        self.assertEqual(r, [1,2,3])
+        self.assertEqual(r, (1,2,3))
         with self.assertRaises(NotImplementedError):
             r[1] = 10
 
