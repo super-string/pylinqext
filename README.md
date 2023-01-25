@@ -1,6 +1,7 @@
 ![GitHub](https://img.shields.io/github/license/super-string/pylinqext)
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/super-string/pylinqext)
 ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/super-string/pylinqext)
+[![Downloads](https://static.pepy.tech/badge/pylinqext)](https://pepy.tech/project/pylinqext)
 # pylinqext
 pylinqext is a package for C#er to write code like LINQ.
 
