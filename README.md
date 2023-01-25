@@ -22,7 +22,20 @@ Output:
 36
 64
 ```
+```python
+from pylinqext import enumerable, pydict
 
+d = pydict({1:1, 2:4, 3:9})
+d.items()\
+    .where(lambda x: x[0] >= 2)\
+    .to_pydict(lambda x:x[0], lambda x:x[1])\
+    .for_each(lambda k,v: print(f"key={k},value={v}"))
+```
+Output:
+```
+key=2,value=4
+key=3,value=9
+```
 ## Install
 ```
 pip install git+https://github.com/super-string/pylinqext
@@ -36,7 +49,13 @@ pip install git+https://github.com/super-string/pylinqext
 - v0.0.3
     - readonlylist, some methods
 - v0.5.0
-    - renampe project to pylinqext
+    - rename project to pylinqext
+- v0.5.1
+    - enumerable
+      - implement to_pydict()
+    - pydict
+        - items() / keys() / values() return pylist
+        - copy() return pydict
 ## class
 - enumerable
 - pylist

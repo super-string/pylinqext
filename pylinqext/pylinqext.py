@@ -73,6 +73,9 @@ class enumerable(Iterator[T], Generic[T]):
             dic[key_selector(e)] = value_selector(e)
         return dic 
     
+    def to_pydict(self, key_selector:Callable[[T], TKey], value_selector:Callable[[T], TValue] = lambda x:x) -> pydict:
+        return pydict(self.to_dict(key_selector=key_selector, value_selector=value_selector)) 
+    
     def where(self, cond:Callable[[T], bool]):
         return enumerable([e for e in self.__cond_iter(cond)])
     
@@ -325,7 +328,7 @@ class enumerable(Iterator[T], Generic[T]):
         l.reverse()
         return enumerable([e for e in l.__iter__()])
     
-class pylist(list, enumerable):
+class pylist(list, enumerable, Generic[T]):
     def __init__(self, ite:Iterable[T]):
         super(pylist, self).__init__(ite)
         self._ite = self
@@ -341,14 +344,14 @@ class pylist(list, enumerable):
     def as_enumerable(self) -> enumerable:
         return enumerable(self)
     
-class pyreadonlylist(tuple, enumerable):
+class pyreadonlylist(tuple, enumerable, Generic[T]):
     def __init__(self, ite:Iterable[T]):
         super(pyreadonlylist, self).__init__(tuple(ite))
     
     def __setitem__(self, index:int, value:T):
         raise NotImplementedError()
 
-class pydict(dict, enumerable):
+class pydict(dict, enumerable, Generic[TKey, TValue]):
     def __init__(self, ite:Iterable[T]):
         super(pydict, self).__init__(ite)
         self._ite = self
@@ -356,3 +359,24 @@ class pydict(dict, enumerable):
     
     def to_pylist(self) :
         return pylist([e for e in self.items()])
+    
+    def items(self) -> pylist[TKey, TValue]:
+        return pylist(super().items())
+    
+    def keys(self) -> pylist[TKey]:
+        return pylist(super().keys())
+    
+    def values(self) -> pylist[TValue]:
+        return pylist(super().values())
+    
+    def copy(self) -> pydict[TKey, TValue]:
+        return pydict(super().copy())
+    
+    def for_each(self, action:Callable[[TKey, TValue]]):
+        for k, v in self.items():
+            action(k, v)
+            
+    def add_if_not_exists(self, key:TKey, value:TValue):
+        if not self.__contains__(key):
+            self[key] = value
+            
